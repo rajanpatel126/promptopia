@@ -1,17 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import Form from "@components/Form";
 
-const CreatePrompt = () => {
+const EditPrompt = () => {
+  const searchParams = useSearchParams();
+  const promptId = searchParams.get("id");
+
   const router = useRouter();
   const { data: session } = useSession();
 
   const [submitting, setIsSubmitting] = useState(false);
   const [post, setPost] = useState({ prompt: "", tag: "" });
+
+  useEffect(() => {
+    const promptDetails = async () => {
+      const response = await fetch(`/api/prompt/${promptId}`);
+      const data = response.json();
+
+      setPost({
+        prompt: data.prompt,
+        tag: data.prompt,
+      });
+    };
+    if (promptId) promptDetails();
+  }, [promptId]);
 
   const createPrompt = async (e) => {
     e.preventDefault();
@@ -39,7 +55,7 @@ const CreatePrompt = () => {
 
   return (
     <Form
-      type='Create'
+      type="Create"
       post={post}
       setPost={setPost}
       submitting={submitting}
@@ -48,4 +64,4 @@ const CreatePrompt = () => {
   );
 };
 
-export default CreatePrompt;
+export default EditPrompt;
