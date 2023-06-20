@@ -20,7 +20,7 @@ const EditPrompt = () => {
     const promptDetails = async () => {
       const response = await fetch(`/api/prompt/${promptId}`);
       const data = response.json();
-
+      // console.log(data);
       setPost({
         prompt: data.prompt,
         tag: data.prompt,
@@ -29,16 +29,17 @@ const EditPrompt = () => {
     if (promptId) promptDetails();
   }, [promptId]);
 
-  const createPrompt = async (e) => {
+  const updatePrompt = async (e) => {
+    if (!promptId) alert("No prompt id found");
+
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/prompt/new", {
-        method: "POST",
+      const response = await fetch(`/api/prompt/${promptId}`, {
+        method: "PETCH",
         body: JSON.stringify({
           prompt: post.prompt,
-          userId: session?.user.id,
           tag: post.tag,
         }),
       });
@@ -59,7 +60,7 @@ const EditPrompt = () => {
       post={post}
       setPost={setPost}
       submitting={submitting}
-      handleSubmit={createPrompt}
+      handleSubmit={updatePrompt}
     />
   );
 };
